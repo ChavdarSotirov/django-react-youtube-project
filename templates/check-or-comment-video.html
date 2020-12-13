@@ -15,13 +15,26 @@
                 <p class="font-weight-light" style="padding-top: 20px">Description of video: {{ video.description }}</p>
                 <div class="row">
                     <div class="col-6" style="padding-top: 40px">
-                        <p class="font-italic">Video was created on: {{ video.created_at }}</p>
+                        {% if can_edit %}
+                            <a href="{% url 'edit video' video.pk %}" class="btn btn-warning">Edit</a>
+                        {% endif %}
+                        {% if can_delete %}
+                            <a href="{% url 'delete video' video.id %}" class="btn btn-danger">Delete</a>
+                        {% endif %}
+                        <p class="font-italic">Video was created on: {{ video.created_at }}  by <a
+                                href="{% url 'user profile' video.user.user_id %}">{{ video.user.user.username }}</a></p>
                     </div>
                     <div class="col-6" style="padding-top: 30px">
-                        <div>
-                            <a href="{% url 'like video' video.pk %}"><i class="fa fa-heart-o" aria-hidden="true" style="font-size: large"></i></a>
-                            <p class="mt-2">Likes: {{ video.like_set.count }}</p>
-                        </div>
+                            <div>
+                                {% if can_like %}
+                                    {% if has_liked %}
+                                        <a href="{% url 'like video' video.id %}"><i class="fa fa-heart" aria-hidden="true" style="font-size: large"></i></a>
+                                    {% else %}
+                                        <a href="{% url 'like video' video.id %}"><i class="fa fa-heart-o" aria-hidden="true" style="font-size: large"></i></a>
+                                    {% endif %}
+                                {% endif %}
+                                <p class="mt-2">Likes: {{ video.like_set.count }}</p>
+                            </div>
                     </div>
                 </div>
                 <div class="main-content" style="width: 800px">
@@ -29,8 +42,9 @@
                         {% if video.comment_set.count > 0 %}
                             {% for comment in video.comment_set.all %}
                                 <div class="box">
+
                                     <h5><em>{{ comment.text }}</em></h5>
-                                    <p style="text-align: right">{{ comment.created_on }} by ....</p>
+                                    <p style="text-align: right">{{ comment.created_on }} by {{comment.user.user.username}}</p>
                                     <hr>
                                 </div>
                             {% endfor %}
@@ -40,11 +54,13 @@
                             </div>
                         {% endif %}
                         <div class="box">
-                            <form method="post" action="{% url 'check or comment video' video.id %}">
-                                {{ form }}
-                                {% csrf_token %}
-                                <button class="btn btn-primary mt-2" type="submit">Add comment</button>
-                            </form>
+                            {% if can_comment %}
+                                <form method="post" action="{% url 'check or comment video' video.id %}">
+                                    {{ form }}
+                                    {% csrf_token %}
+                                    <button class="btn btn-primary mt-2" type="submit">Add comment</button>
+                                </form>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

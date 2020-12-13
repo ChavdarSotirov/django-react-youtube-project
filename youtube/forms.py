@@ -12,7 +12,7 @@ class VideoCreationForm(forms.ModelForm):
 
     class Meta:
         model = Video
-        fields = '__all__'
+        exclude = ('user',)
 
 
 class CommentForm(forms.Form):

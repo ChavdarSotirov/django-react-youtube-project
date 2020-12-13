@@ -23,4 +23,5 @@ media_files = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('youtube.urls')),
+    path('auth/', include('auth_youtube.urls')),
 ] + media_files
